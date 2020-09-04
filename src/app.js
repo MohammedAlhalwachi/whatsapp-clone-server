@@ -40,10 +40,14 @@ let sessionOptions = {
 };
 
 if(process.env.NODE_ENV === 'production'){
+	console.log('in prod');
+	
 	app.set('trust proxy', 1);
 
 	sessionOptions.cookie.sameSite = 'none';
 	sessionOptions.cookie.secure = true;
+
+	console.log('session options', sessionOptions);
 }
 
 app.use(bodyParser.urlencoded({ extended: false }));
