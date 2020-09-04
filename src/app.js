@@ -1,3 +1,5 @@
+import rooms from "./routes/rooms";
+
 require('dotenv').config();
 
 import sequelize from './models/sequelize';
@@ -12,10 +14,11 @@ const FileStore = require('session-file-store')(session);
 const passport = require("passport");
 const LocalStrategy = require('passport-local').Strategy;
 
-import api from './routes/api'
+import auth from './routes/auth'
 import {User} from "./models/models";
 
 const app = express();
+const api = express.Router();
 const port = process.env.PORT || 4000;
 
 app.options('*', cors({
@@ -44,19 +47,19 @@ passport.serializeUser(function(user, done) {
 	done(null, user.id);
 });
 
-passport.deserializeUser(async function(id, done) {
+passport.deserializeUser(async function(req, id, done) {
 	try{
 		const user = await User.findByPk(id);
-		console.log('user uid:', id)
-		console.log('user:', user.toJSON())
 
 		done(null, user.toJSON())
 	}catch (err){
+		req.session.destroy();
 		done(err, null);
 	}
 });
 
-passport.use(new LocalStrategy({ usernameField: 'email', passwordField: 'password' }, async function(email, password, done) {
+passport.use(new LocalStrategy({ usernameField: 'email', passwordField: 'password' },
+	async function(email, password, done) {
 		try {
 			const user = await User.findOne({
 				where: {
@@ -69,7 +72,6 @@ passport.use(new LocalStrategy({ usernameField: 'email', passwordField: 'passwor
 			}
 			
 			const isPasswordValid = await user.validPassword(password);
-			console.log(isPasswordValid)
 
 			if (!isPasswordValid) {
 				return done(null, false, { message: 'Incorrect password.' });
@@ -94,30 +96,33 @@ passport.use(new LocalStrategy({ usernameField: 'email', passwordField: 'passwor
 ));
 
 
-
 app.use((req, res, next) => {
 	try {
-		// console.log('Test middleware');
 		next();
 	} catch (e) {
 		next(e);
 	}
 });
 
-app.get('/sync', async (req, res, next) => {
+api.get('/sync', async (req, res, next) => {
 	try {
-		await sequelize.sync({force: true });
+		await sequelize.sync({ alter: true });
 		res.send('synced');
 	} catch (e){
 		next(e);
 	}
 });
 
+api.use('/auth', auth);
+api.use('/rooms', rooms);
+
 app.use('/api', api);
 
 app.use(function (err, req, res, next) {
+	console.error(err)
+
 	res.status(500).json({
-		error: err.message
+		error: 'Something went wrong please try again later.'
 	});
 })
 

@@ -23,9 +23,9 @@ const unique = (model) => {
 	}
 }
 
-const api = express();
+const auth = express();
 
-api.post('/register', [
+auth.post('/register', [
 	body('username').exists().withMessage('Username is required.').isLength({ min: 4, max: 30 }).withMessage('Username should be at least 4 characters and less than 30 characters.').escape(),
 	body('email').isEmail().withMessage('Email is not correct.').normalizeEmail(),
 	body('password').exists().withMessage('Password is required.').isLength({ min: 6, max: 60 }).withMessage('Password should be at least 6 characters.'),
@@ -59,27 +59,32 @@ api.post('/register', [
 	}
 });
 
-api.post('/login',
+auth.post('/login',
 	body('email').isEmail().withMessage('Email is not correct.').normalizeEmail(),
 	body('password').exists().withMessage('Password is required.').isLength({ min: 6, max: 60 }).withMessage('Password should be at least 6 characters.'),
 	passport.authenticate('local'),
 	(req, res) => {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return res.status(422).json({ errors: errors.array() });
+		}
+		
 		res.json(req.user);
 	}
 );
 
-api.get('/user',
+auth.get('/user',
 	isAuthed,
 	(req, res) => {
 		res.json(req.user);
 	}
 );
 
-api.post('/logout', function(req, res){
+auth.post('/logout', function(req, res){
 	req.logout();
 	res.json({
 		msg: 'logged out'
 	});
 });
 
-export default api;
+export default auth;
