@@ -34,6 +34,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cookieParser(process.env.APP_KEY));
 app.use(session({ 
+	cookie: {
+		sameSite: 'none',
+	},
 	store: new FileStore({}),
 	secret: process.env.APP_KEY,
 	resave: false,
