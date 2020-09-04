@@ -36,6 +36,7 @@ app.use(cookieParser(process.env.APP_KEY));
 app.use(session({ 
 	cookie: {
 		sameSite: 'none',
+		secure: true,
 	},
 	store: new FileStore({}),
 	secret: process.env.APP_KEY,
