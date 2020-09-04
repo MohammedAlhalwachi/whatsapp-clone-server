@@ -190,7 +190,7 @@ rooms.post('/:id/messages', [
 			roomId: room.id,
 		})
 
-		pusher.trigger(`room-21`, 'update-messages', {
+		pusher.trigger(`room-${id}`, 'update-messages', {
 			'message': 'hello world'
 		}, function (){
 			res.json(message);
