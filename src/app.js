@@ -1,7 +1,4 @@
-import rooms from "./routes/rooms";
-
 require('dotenv').config();
-
 import sequelize from './models/sequelize';
 import express from 'express';
 import bodyParser from 'body-parser';
@@ -15,6 +12,8 @@ const passport = require("passport");
 const LocalStrategy = require('passport-local').Strategy;
 
 import auth from './routes/auth'
+import rooms from "./routes/rooms";
+
 import {User} from "./models/models";
 
 const app = express();
@@ -22,12 +21,12 @@ const api = express.Router();
 const port = process.env.PORT || 4000;
 
 app.options('*', cors({
-	origin: 'http://localhost:3000',
+	origin: process.env.CLIENT_ORIGIN,
 	credentials: true,
 }));
 
 app.use(cors({
-	origin: 'http://localhost:3000',
+	origin: process.env.CLIENT_ORIGIN,
 	credentials: true,
 }));
 

@@ -152,6 +152,9 @@ rooms.get('/:id/messages', [
 		
 		const room = await Room.findByPk(id, {
 			include: Message,
+			order: [
+				[Message, 'createdAt', 'DESC']
+			]
 		});
 
 		if(room){
