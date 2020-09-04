@@ -6,7 +6,7 @@
 	"scripts": {
 		"dev": "nodemon src/app.js --exec babel-node --presets @babel/preset-env -- ./src/app.js",
 		"build": "babel -d ./build ./src -s",
-		"start": "node ./build/index.js"
+		"start": "node ./build/app.js"
 	},
 	"author": "",
 	"license": "ISC",
