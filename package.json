@@ -25,6 +25,7 @@
 		"passport-local": "^1.0.0",
 		"pg": "^8.3.3",
 		"pg-hstore": "^2.3.3",
+		"pusher": "^3.0.1",
 		"sequelize": "^6.3.5",
 		"session-file-store": "^1.4.0"
 	},

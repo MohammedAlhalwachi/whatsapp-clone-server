@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 import express from 'express';
 import {isAuthed} from "../middleware/isAuthed";
 import auth from "./auth";
@@ -8,6 +10,7 @@ import Sequelize, {Op} from "sequelize";
 import Message from "../models/Message";
 import {parse} from "dotenv";
 import {param} from "express-validator";
+import {pusher} from '../services/pusher'
 
 const rooms = express();
 
@@ -187,7 +190,11 @@ rooms.post('/:id/messages', [
 			roomId: room.id,
 		})
 
-		res.json(message);
+		pusher.trigger(`room-21`, 'update-messages', {
+			'message': 'hello world'
+		}, function (){
+			res.json(message);
+		});
 	}catch (err){
 		next(err)
 	}

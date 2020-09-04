@@ -39,20 +39,12 @@ let sessionOptions = {
 	saveUninitialized: true,
 };
 
-
-console.log(process.env.NODE_ENV);
-
 if(process.env.NODE_ENV === 'production'){
-	console.log('in prod');
-	
 	app.set('trust proxy', true);
 
 	sessionOptions.proxy = true;
 	sessionOptions.cookie.sameSite = 'none';
 	sessionOptions.cookie.secure = true;
-	
-	console.log('session options', sessionOptions);
-	console.log('app get trust proxy', app.get('trust proxy'));
 }
 
 app.use(bodyParser.urlencoded({ extended: false }));
