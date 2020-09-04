@@ -30,19 +30,26 @@ app.use(cors({
 	credentials: true,
 }));
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-app.use(cookieParser(process.env.APP_KEY));
-app.use(session({ 
-	cookie: {
-		sameSite: 'none',
-		secure: true,
-	},
+
+let sessionOptions = {
+	cookie: {},
 	store: new FileStore({}),
 	secret: process.env.APP_KEY,
 	resave: false,
 	saveUninitialized: false,
-}));
+};
+
+if(process.env.NODE_ENV === 'production'){
+	app.set('trust proxy', 1);
+
+	sessionOptions.cookie.sameSite = 'none';
+	sessionOptions.cookie.secure = true;
+}
+
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(cookieParser(process.env.APP_KEY));
+app.use(session(sessionOptions));
 app.use(passport.initialize());
 app.use(passport.session());
 
